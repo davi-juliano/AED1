@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct{
+	char nome[50];
+	int idade;
+	float altura;
+}Pessoa;
+
+void ImprimaDados(Pessoa *pessoas[], i){
+    printf("%s", pessoas[i]->nome);
+    printf("\n%d", pessoas[i]->idade);
+    printf("\n%f", pessoas[i]->altura);
+    free(pessoas[i]);    
+}
+
+int main(){
+	int i, TAM;
+
+	scanf("%d", &TAM);
+
+	Pessoa *pessoas[];
+
+pessoas=(Pessoa*)malloc(sizeof(Pessoa));
+
+for(i=0;i<TAM;i++){
+	gets(&pessoas[i]->nome);
+	scanf ("%d", &pessoas[i]->idade);
+	scanf ("%f", &pessoas[i]->altura);
+}
+
+for(i=0;i<TAM;i++){
+	ImprimaDados(pessoas, i);
+}
+
+
+}

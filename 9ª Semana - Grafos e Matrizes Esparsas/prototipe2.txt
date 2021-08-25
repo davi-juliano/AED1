@@ -1,0 +1,153 @@
+/* Magno Luiz Gonçalves Melo Ra 133688 turma NA */
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+
+#define MAX_LINHA 100
+#define CLF 8 //numero de classe de filmes//
+
+typedef struct no *pme;
+
+struct no {
+	int col;
+	pme prox;
+};
+
+
+typedef pme matriz[MAX_LINHA];
+
+/* inicializa a matriz m */
+void inicializa(matriz m, int l){
+	int i;
+	for (i=0; i<l; i++)
+	m[i] = NULL;
+}
+
+/realiza a inserção na matriz/
+void insere(matriz m, int li, int co) {
+	pme novo, p;
+	int aux;
+
+	novo = (pme)malloc(sizeof(struct no));
+	novo->col = co;
+	novo->prox = NULL;
+
+	if (m[li]==NULL)
+	m[li] = novo;
+	
+	else {
+		for(p = m[li]; p->prox!=NULL; p=p->prox);	
+		p->prox = novo;
+	}
+	for(p = m[li]; p->prox!=NULL; p=p->prox){
+		if(p->col > p->prox->col){
+		aux = p->col;
+		p->col = p->prox->col;
+		p->prox->col = aux;
+		}
+
+	}
+	printf("%d %d\n",novo->col, li);
+}
+
+/* imprime a matriz inteira */
+void imprime(matriz m, int tlin, int tcol ){
+	int i,j;
+	pme p;
+
+	for(i=0;i<=tlin;i++){
+		p = m[i];
+
+		for(j=1;j<=tcol;j++)
+			if ((p!=NULL) && (p->col==j)){
+				printf(" %d ",p->col);
+				p = p->prox;
+			}
+			else
+			printf(" 0 ");
+
+			printf("\n");
+		}
+
+	printf("\n\n");
+}
+
+void libera(matriz m, int l){
+	pme p, q;
+	int i;
+
+	for(i=0;i<l;i++){
+		p = m[i];
+		while (p!=NULL){
+			q = p;
+			p = p->prox;
+			free(q);
+		}
+	}
+}
+
+void imprime_condensada(matriz m, int i, int f){
+    int j;
+	pme p;
+
+    p=m[i];
+
+		for(j=1;j<=f;j++){
+			if ((p!=NULL) && (p->col==j)){
+				printf(" %d ",p->col);
+
+				printf("\n");
+				p = p->prox;
+			}
+        }
+}
+
+int main(){
+	int linha,coluna, vertices;
+	matriz m;
+	char orientacao[3]; // sim ou nao;
+
+
+
+	printf("Informe número de vértices: ");
+
+	scanf("%d",&vertices);
+
+	inicializa(m,vertices);
+
+    printf("O grafo é orientado?: ");
+    
+    scanf("%s",orientacao);
+
+	printf("Informe conexões, digite 0 para encerrar\n");
+
+	do{
+
+	scanf("%d""%d",&linha,&coluna);
+
+	if(linha == 0)
+	break;
+
+	if(strcmp(orientacao,"sim")==1){
+		insere(m, linha, coluna);
+		printf("a");
+	}else{
+	    printf("b");
+		insere(m, linha, coluna);
+		insere(m, coluna, linha);
+	}
+}
+	while(linha!=0);
+
+	printf("Informe o vértice que deseja saber os adjacentes:\n");
+	scanf("%d",&linha);
+
+	imprime(m,vertices,vertices);
+
+	imprime_condensada(m,linha,vertices);
+
+	return;
+
+}

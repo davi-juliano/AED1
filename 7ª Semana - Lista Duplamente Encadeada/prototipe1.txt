@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#define MAX 50
+
+typedef struct lista2 {
+  char info;
+  struct lista2* ant;
+  struct lista2* prox;
+}TLista2;
+typedef TLista2 *PLista2;
+
+PLista2 inicia_lista(PLista2 lista){
+    return NULL;
+}
+
+PLista2 insere_fim (PLista2 l, char v) {
+  PLista2 novo; 
+  PLista2 aux;
+  novo = (PLista2) malloc(sizeof(TLista2));
+
+  if (novo == NULL){
+    printf("Não foi possivel alocar!");
+    return NULL;
+  }
+  
+  novo->info = v;
+  novo->prox = NULL;
+  
+  if (l == NULL) {
+    novo->ant = NULL;
+    l = novo;
+    return novo;
+  }
+  
+  else {
+    aux = l;
+    while(aux->prox != NULL){
+      aux = aux->prox;
+    }
+    aux->prox = novo;
+    novo->ant = aux;
+  }
+  return l;
+}
+
+PLista2 busca_no(PLista2 l, char v){
+  PLista2 p;
+  
+  for (p=l; p!=NULL; p=p->prox)
+    if (p->info == v){
+      return p;
+    }
+return NULL; 
+}
+
+void imprime_lista(PLista2 lista, char palavra_pos[]){ 
+  PLista2 p = lista;
+  int i=0;
+    do {
+      palavra_pos[i]=p->info;
+      p = p->prox;
+      i++;
+    }while (p != NULL);
+  }
+
+void trocaLetras(PLista2 lista1, PLista2 lista2){ 
+    PLista2 aux=lista1;
+
+    aux->prox = lista2->prox;
+    aux->ant = lista2->ant;;
+    lista2->ant->prox = aux;
+    lista2->prox->ant = aux;
+
+    lista2->prox = lista1->prox;
+    lista2->ant = lista1->ant;
+    lista1->ant->prox = lista2;
+    lista1->prox->ant = lista2;
+
+	return;
+}
+
+int main(){
+    PLista2 lista, laux1, laux2;
+    char palavra_ant[MAX], palavra_pos[MAX], letra1, letra2;
+    int i=0;
+
+    lista = inicia_lista(lista);
+    laux1 = inicia_lista(laux1);
+    laux2 = inicia_lista(laux2);
+    
+    scanf("%s", &palavra_ant);
+    
+    while(palavra_ant[i]!=','){
+        lista = insere_fim(lista, palavra_ant[i]);
+        i++;
+    }
+    
+    letra1 = palavra_ant[i+1];
+    letra2 = palavra_ant[i+3];
+    
+    laux1 = busca_no(lista, letra1);
+    laux2 = busca_no(lista, letra2);
+    
+    trocaLetras(laux1, laux2);
+    
+    imprime_lista(lista, palavra_pos);
+    
+    for(i=0;i<strlen(palavra_pos);i++){
+        printf("%c",palavra_pos[i]);
+    }
+
+
+}

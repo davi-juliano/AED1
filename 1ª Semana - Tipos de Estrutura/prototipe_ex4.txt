@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int ProcuraNome(char nome[]){
+	FILE *pq;
+	char str[50];	
+	int i;
+
+	pq=fopen("texto.txt", "r");
+	
+	while(!feof(pq)){
+		fscanf("%s\n", &str);
+		if(strcmp(str, nome) == 0){
+			i++;
+		}
+	}
+    fclose(pq);
+	return i;	
+}
+
+
+int main(){
+	FILE *parq;
+	int i, num;
+
+	char nome1[100];
+    char nome2[100];
+
+    parq=fopen("texto.txt", "w");
+
+    while (strcmp(nome1, "fim") != 0) {
+        scanf("%s", nome1);
+        fprintf(parq, "%s\n", nome1);
+	}
+    fclose(parq);
+    
+    printf("escreva o nome 2:\n");
+    scanf("%s", nome2);
+    num = ProcuraNome(nome2);
+    printf("%d", num);
+}

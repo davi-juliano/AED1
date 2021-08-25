@@ -1,0 +1,48 @@
+typedef struct lista{
+    int info;
+    struct lista* prox;
+}Lista;
+typedef Lista *PLista
+
+typedef struct arv{
+    int info;
+    struct arv* esq;
+    struct arv*dir;
+}TArv;
+typedef TArv *PArv;
+
+PLista inserir_lista(PLista l, int info){ //Função que insere valores na lista
+  PLista novo;
+  PLista ant = NULL;
+  PLista ptaux = l; 
+
+  novo = (TLista*) malloc(sizeof(TLista)); //Faz alocação da estrutura que será o ponteiro da anterior
+
+  novo->info= info;
+
+  while ((ptaux!=NULL) && (ptaux->codigo)<codigo){
+    ant = ptaux;
+    ptaux = ptaux->prox;
+  }
+
+  if (ant == NULL){
+    novo->prox = l;
+    l = novo;
+  }
+
+  else{
+    novo->prox = ant->prox;
+    ant->prox = novo;
+  }
+  return l; //Retorna uma nova lista com o valor inserido numa ordem crescente
+
+}
+
+PLista Em_ordem(PArv a, PLista lista){
+    while(a){
+        Em_ordem(a->esq);
+        lista = cria_lista(lista, a->info);
+        Em_ordem(a->dir);
+    }
+    return lista;
+}

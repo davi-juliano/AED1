@@ -1,0 +1,155 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_FILA 100
+typedef struct FILA{
+    int id[MAX_FILA];
+    int itens [MAX_FILA];
+    int n; /*numero de elementos armazenados na fila*/
+    int ini; /* indice para o inicio da fila */
+}TFila;
+
+typedef TFila *PFila;
+
+PFila cria_fila(){
+    PFila fila = (PFila) malloc (sizeof (TFila));
+    fila->n = 0;
+    fila->ini = 0;
+    return (fila);
+}
+
+void libera_fila(PFila fila){
+    free(fila);
+    return;
+}
+
+
+int insere (PFila p, int val1, int val2){
+    int fim;
+    if (p == NULL) {
+        printf("Fila não inicializada!\n");
+        return -1; 
+    }
+    if (p->n == MAX_FILA ){
+        printf("Fila cheia!\n");
+        return -1; 
+    }
+    fim = (p->ini+p->n)%MAX_FILA;
+    p->itens[fim] = val1;
+    p->id[fim] = val2;
+    p->n++;
+    return 0; 
+}
+
+int incr_indice(int i){
+    return (i+1)%MAX_FILA;
+}
+
+void ordena_fila(PFila p, int candidatos){
+    int i, j, aux1, aux2;
+    
+    if(candidatos == 0){
+        printf("Não há candidatos inseridos!");
+        return ;
+    }
+    
+    for(i=0; i<candidatos; i++){
+        for(j=i+1; j<candidatos; j++){
+            if(p->itens[i] < p->itens[j]){
+                aux1 = p->itens[i];
+                aux2 = p->id[i];
+                p->itens[i] = p->itens[j];;
+                p->id[i] = p->id[j];;
+                p->itens[j] = aux1;
+                p->id[j] = aux2;
+            }
+        }
+    }
+return ;
+}
+
+
+int retira(PFila p, int* val1, int* val2){
+    if (p==NULL){
+        printf("Fila não inicializada!\n");
+        return -1; 
+    }
+    if (p->n ==0){
+        printf("Fila vazia!\n");
+        return -1; 
+    }
+    *val1 = p->itens[p->ini];
+    *val2 = p->id[p->ini];
+    p->ini = incr_indice(p->ini);
+    p->n--;
+    return 0;
+}
+
+void respostas(PFila p, int vagas){
+    int i=0, k=0, *val1, *val2;
+    char resposta;
+    do{
+      printf("Resposta recebido do candidato de id %d (s/n):", p->id[i]);
+      scanf("%c", &resposta);
+
+      if(resposta =='s'){
+        k++;
+      }
+
+      retira(p, val1 , val2);
+
+      i++;
+    }while(k!=vagas);
+
+return;
+}
+
+
+int main(){
+  int candidatos=0, vagas=0, i, id=0, nota=0, j=0, k=0;
+  PFila p;
+    
+  printf("Quantidade de Candidatos:");
+  scanf("%d", &candidatos);
+    
+  printf("Quantidade de Vagas:");
+  scanf("%d", &vagas);
+    
+  p = cria_fila();
+    
+  for(i=0;i<candidatos;i++){
+    id=0;
+    nota=0;
+        
+    printf("Número Identificador do Candidato:");
+    scanf("%d", &id);
+        
+      while(j<MAX_FILA){
+        if(id == p->id[j]){
+          printf("Já existe um candidato com esse ID, digite outro ID:");
+          scanf("%d", &id);
+          }
+          j++;
+      }  
+        
+      printf("Nota do candidato:");
+      scanf("%d", &nota);
+        
+      while(0 > nota || nota > 100){
+        printf("Nota Inválida, insira outra:");
+        scanf("%d", &nota);
+      }
+        
+      insere(p, nota, id);
+      printf("Candidato Inserido!\n");
+  }
+
+  ordena_fila(p, candidatos);
+    
+  for(i=0;i<candidatos;i++){
+    printf("\nCandidato %d, nota: %d", p->id[i], p->itens[i]);
+  }
+
+
+}

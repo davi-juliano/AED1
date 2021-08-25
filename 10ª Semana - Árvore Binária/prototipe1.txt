@@ -1,0 +1,196 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/*definindo primeiramente uma estrutura para as informaçoes
+contidas em cada nó*/
+typedef struct arv {
+    char info;
+    struct arv* esq;
+    struct arv* dir;
+}TArv;
+typedef TArv *PArv;
+
+void inicializa_arvore(PArv arvore){
+    arvore=NULL;
+}
+
+PArv cria(char c, PArv sae, PArv sad) {
+    PArv p = (PArv)malloc(sizeof(TArv));
+    p->info = c;
+    p->esq = sae;
+    p->dir = sad;
+    return p;
+}
+
+PArv insere(char c[], PArv sae, PArv sad,int j, int k){
+  PArv p;
+  int i=j;
+    if(k==0)
+        return NULL;
+
+    p = (PArv)malloc(sizeof(TArv));
+    p->info = c[j];
+    p->esq = NULL;
+    p->dir = (insere(c,NULL,NULL,++i, --k));
+    return p;
+}
+
+void imprimeIn (PArv a) {
+  if (a!=NULL) {
+    imprimeIn(a->esq); /* mostra sae */
+    printf("%c ", a->info);
+    imprimeIn(a->dir); /* mostra sad */
+  }
+}
+
+void imprimePre (PArv a) {
+  if (a!=NULL) {
+    printf("%c ", a->info);
+    imprimePre(a->esq); /* mostra sae */
+    imprimePre(a->dir); /* mostra sad */
+  }
+}
+
+PArv busca(PArv t, char dado){    
+    PArv achou;   
+    if (t==NULL){
+      //printf("sefudeu");
+      return NULL;   
+    }
+    if (t->info == dado){ 
+      //printf("taok");
+      return t;   
+    }
+    achou = busca(t->esq, dado);   
+    if (achou == NULL)   
+        achou = busca(t->dir, dado);   
+    return achou;   
+}
+
+void imprimefilho(PArv no){
+    PArv aux = no->esq;
+
+	while(aux!= NULL){
+		printf("%c",aux->info);
+		aux = aux->dir;
+	}
+}
+
+void imprimeirmao(PArv no){
+    PArv aux = no->dir;
+
+	while(aux!= NULL){
+		printf("%c",aux->info);
+		aux = aux->dir;
+	}
+}
+
+PArv libera (PArv a){
+    if (a!=NULL) {
+        libera(a->esq); /* libera sae */
+        libera(a->dir); /* libera sad */
+        free(a); /* libera raiz */
+    }
+    return NULL;
+}
+
+int main(){   
+    FILE *arq;
+    char vetor[70], filho[70];
+    int menu = 0, i=0, j=0, k=0, numfilho=0;
+    PArv arvore,arvaux;
+
+    inicializa_arvore(arvore);
+    inicializa_arvore(arvaux);
+    arq = fopen("arv.txt", "r");
+  
+i=0;
+while (!feof(arq)){
+    fgets(vetor, 100, arq);
+    while(vetor[j]!='\n'){
+        filho[j]=vetor[j];
+        j++;
+    }
+    arvaux = busca(arvore, filho[0]);
+    if(arvaux==NULL){
+        arvore = cria(filho[0],NULL,NULL);
+        arvaux = arvore;
+        k = vetor[1]-'0';
+        j=2;
+        arvaux->esq = insere(filho,NULL,NULL,j, k);
+    }
+    else{
+        k=vetor[1]-'0';
+        j=2;
+        arvaux->esq = insere(filho,NULL,NULL,j,k);
+    }
+    j=0;
+    i++;
+}
+  do{
+    
+      printf("Selecione 1 para imprimir a árvore resultante em pré-ordem;\n");    
+      printf("Selecione 2 para imprimir a árvore resultante em ordem infixa;\n");
+      printf("Selecione 3 para imprimir os filhos de um dado nó\n");
+      printf("Selecione 4 para imprimir os irmão de um dado nó\n");
+      printf("Selecione 5 para sair\n");
+        
+      scanf("%d", &menu);
+      getchar();
+      
+      switch(menu){
+        case 1:
+          printf("A árvore em pré-ordem é dada por:");
+          imprimePre(arvore);
+          printf("\n");
+          break;
+
+        case 2:
+          printf("A árvore em pré-ordem é dada por:");
+          imprimeIn(arvore);
+          printf("\n");
+          break;
+
+        case 3:
+          printf("Qual nó quer encontrar os filhos?");
+          scanf("%c", &filho[0]);
+          getchar();
+          if((arvaux = (busca(arvore, filho[0]))) == NULL){
+            printf("Não existe esse nó! Digite outro:");
+            scanf("%c", &filho[0]);
+          }
+          printf("Os filhos do nó pedido é:");
+          imprimefilho(arvaux);
+          printf("\n");
+          break;
+
+        case 4:
+          printf("Qual nó quer encontrar os irmãos?");
+          scanf("%c", &filho[0]);
+          getchar();
+          if((arvaux = (busca(arvore, filho[0]))) == NULL){
+            printf("Não existe esse nó! Digite outro:");
+            scanf("%c", &filho[0]);
+          }
+          printf("Os irmãos do nó pedido é:");
+          imprimeirmao(arvaux);
+          printf("\n");
+          break;
+
+
+        case 5:
+          printf("Você saiu do programa!");
+          libera(arvore);
+          break;
+
+        default:
+          printf("Comando Inválido! Selecione um valor válido:");
+          scanf("%d", &menu);
+          break;
+        };
+
+    }while(menu != 5);
+
+    return 0;
+}

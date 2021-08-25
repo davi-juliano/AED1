@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAX 50
+
+typedef struct lista {
+  float preco;
+  int codigo;
+  char nome[MAX];
+  struct lista* prox;
+}TLista;
+typedef TLista *PLista;
+
+PLista inicializa_lista(){
+  return NULL;
+}
+
+PLista inserir_lista(PLista l, int codigo, float preco, char nome[]){
+  PLista novo;
+  PLista ant = NULL;
+  PLista ptaux = l; 
+
+  novo = (TLista*) malloc(sizeof(TLista));
+
+  novo->codigo = codigo;
+  novo->preco = preco;
+  strcpy(novo->nome, nome);
+
+  while ((ptaux!=NULL) && (ptaux->codigo)<codigo){
+    ant = ptaux;
+    ptaux = ptaux->prox;
+  }
+
+  if (ant == NULL){
+    novo->prox = l;
+    l = novo;
+  }
+
+  else{
+    novo->prox = ant->prox;
+    ant->prox = novo;
+  }
+  return l;
+}
+
+PLista exclui_produto(PLista l, char nome[]){
+  PLista ant = NULL; 
+  PLista p; 
+  
+  for (p=l;p!=NULL && p->nome!=nome; p = p->prox){
+    ant = p;
+  }
+
+  if (p == NULL){
+    return l;
+  }
+  
+  if (ant == NULL){
+    l = p->prox;
+  }
+
+  else{
+    ant->prox = p->prox;
+  }
+
+free(p);
+printf("O produto %s foi excluído da lista com sucesso!", nome);
+return l;
+}
+
+void busca_produto(PLista l, int codigo){
+  PLista p; 
+
+  for (p = l; p->codigo != codigo ; p = p->prox){
+    printf("O preço do produto de código %d é %.2f\n", p->codigo, p->preco);
+  }
+  printf("\n");
+}
+
+void destroi_lista(PLista l){
+  PLista p = l, t;
+
+  while (p != NULL){
+    t = p->prox;
+    free(p);
+    p = t;
+  }
+}
+
+int main(void) {
+  PLista l;
+  int produtos, i, codigo;
+  float preco;
+  char nome[MAX];
+
+  l=inicializa_lista();
+
+  printf("Quantos produtos quer adicionar na lista?\n");
+  scanf("%d", &produtos);
+
+  for(i=0; i<produtos; i++){
+    printf("Digite o nome do produto:");
+    scanf("%s", &nome);
+    printf("Digite o preço do produto:");
+    scanf("%f", &preco);
+    printf("Digite o código do produto:");
+    scanf("%d", &codigo);
+
+    inserir_lista(l, codigo, preco, nome);
+  }
+
+  printf("\nQual produto você quer buscar ?");
+  scanf("%d", &codigo);
+  busca_produto(l, codigo);
+
+  printf("\nQual produto você quer excluir ?");
+  scanf("%s", &nome);
+  exclui_produto(l, nome);
+
+  destroi_lista(l);
+}

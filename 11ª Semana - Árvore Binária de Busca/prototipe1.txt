@@ -1,0 +1,251 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct arv{
+    int info;
+    struct arv* esq;
+    struct arv*dir;
+}TArv;
+typedef TArv *PArv;
+
+PArv cria_arvore(){
+	PArv aux = NULL;
+	return aux;
+}
+
+PArv insereABB (PArv a, int c){     //Função que insere um valor na ABB
+    if (a == NULL) {  //Há uma diferença no código do slide, para evitar inserir o mesmo valor duas vezes
+        PArv novo=(PArv)malloc(sizeof(TArv));
+        novo->esq = NULL;
+        novo->dir = NULL;
+        novo->info = c;
+        a = novo;
+    }
+
+    else if (c < a->info)
+        a->esq = insereABB(a->esq,c);
+    else if (c > a->info)  
+        a->dir = insereABB(a->dir,c);
+    else{
+        return(a);
+    }
+}
+
+PArv buscaABB(PArv a, int c) { //Função que busca um nó de acordo com o dado dele na ABB
+    if (a==NULL)
+        return NULL; 
+    
+    else if(c < a->info)
+        return(buscaABB(a->esq,c));
+    
+    else if (c > a->info)
+        return(buscaABB(a->dir,c));
+    
+    else
+        return a;
+    
+}
+
+void imprimeIn (PArv a){ //Função que imprime em ordem infixa
+  if (a!=NULL) {
+    imprimeIn(a->esq);
+    printf("%d ", a->info);
+    imprimeIn(a->dir);
+  }
+}
+
+int verif_se_ABB(PArv a){
+    PArv prox=NULL;
+    if(a){
+        if (!verif_se_ABB(a->esq)){
+          return 0;
+        }
+        if(prox != NULL && a->info <= prox->info){
+            return 0;
+        }
+        prox = a;
+        return verif_se_ABB(a->dir);
+    }
+    return 1;
+}
+
+/*
+int verif_se_ABB(PArv a){
+	if(a==NULL){ 
+	    return 1;
+	}
+	if(a->esq!=NULL && a->dir!=NULL){
+		if(a->info > a->esq->info && a->info < a->dir->info){
+			verif_se_ABB(a->esq);
+			verif_se_ABB(a->dir);
+		}
+	}
+	if(a->esq!=NULL){
+		if(a->info <= a->esq->info){
+			return 0;
+		}
+	    else{
+	        verif_se_ABB(a->esq);
+	    }
+	}
+	if(a->dir!=NULL){
+		if(a->info >= a->dir->info){
+			return 0;
+	}
+	    else{ 
+	        verif_se_ABB(a->dir);
+	    }
+	} 
+}
+*/
+/*
+int verif_se_ABB(PArv a){
+	int retorno = 0;
+
+	if(a==NULL){ 
+	    return 1;
+	}
+
+	if(retorno == 0){
+
+		if(a->esq!=NULL && a->dir!=NULL){
+			if(a->info > a->esq->info && a->info < a->dir->info){
+				verif_se_ABB(a->esq);
+				verif_se_ABB(a->dir);
+				return 1;
+			}
+		}
+		if(a->esq!=NULL){
+			if(a->info <= a->esq->info){
+				return 0;
+			}
+		    else{ 
+		        verif_se_ABB(a->esq);
+		    }		
+		        
+		}
+		if(a->dir!=NULL){
+			if(a->info >= a->dir->info){
+				return 0;
+		}
+		else{ 
+		    verif_se_ABB(a->dir);
+		}
+	} 
+	return 1;
+
+}
+    else{
+        return 1;
+    }
+}
+*/
+/*
+int verif_se_ABB(PArv a){
+    PArv aux1 = a->esq;
+    PArv aux2 = a->dir;
+    
+    if(aux1 == NULL && aux2 == NULL){ //Caso Base caso seja uma ABB
+        return 1;
+    }
+    
+    if(a->info < a->esq->info || a->info > a->dir->info){ //Caso Base caso não seja uma ABB
+        return 0;
+    }
+    
+    if(a->info > a->esq->info){ //Caso a informação da esquerda menor que o nó principal
+        if(verif_se_ABB(aux1) == 1 && verif_se_ABB(aux2) == 1){
+            return 1;
+        };
+    }    
+    
+    if(a->info < a->dir->info){ //Caso a informação da direita maior que o nó principal
+        if(verif_se_ABB(aux1) == 1 && verif_se_ABB(aux2) == 1){
+            return 1;
+        }
+    }
+}
+*/
+
+PArv une_ABB(PArv a, PArv b){
+    PArv c = a;    
+    
+    if(b==NULL){ 
+        return a;
+    }
+    
+    if((c = buscaABB(c, b->info)) == NULL){
+        insereABB(a,b->info);
+    }
+    
+    une_ABB(a,b->esq);
+    une_ABB(a,b->dir);
+
+}
+/*
+PArv une_ABB(PArv a, PArv b){
+    if(b==NULL){
+        return a;
+    }
+    else if(b->esq!= NULL){
+	    a = insereABB(a,b->info);
+	    return (une_ABB(a,b->esq));
+    }
+    
+    else if(b->dir!= NULL){
+	    a = insereABB(a,b->info);
+	    return (une_ABB(a,b->dir));
+    }
+    else{
+        printf("Inserido!");
+        return a;
+    }
+}
+*/
+
+void libera (PArv a){  //Função que libera a árvore 
+    if (a!=NULL) {
+        libera(a->esq);
+        libera(a->dir);
+        free(a); 
+    }
+    return;
+}
+
+int main(){
+    PArv arvore1, arvore2, uniao;
+    
+    arvore1 = cria_arvore();
+    arvore2 = cria_arvore();
+    uniao = cria_arvore();
+
+    arvore1 = insereABB(arvore1, 9);
+    arvore1 = insereABB(arvore1, 8);
+    arvore1 = insereABB(arvore1, 15);
+    arvore1 = insereABB(arvore1, 5);
+    arvore1 = insereABB(arvore1, 2);
+    arvore1 = insereABB(arvore1, 4);
+    arvore1 = insereABB(arvore1, 20);
+
+    arvore2 = insereABB(arvore2, 8);
+    arvore2 = insereABB(arvore2, 4);
+    arvore2 = insereABB(arvore2, 20);
+    arvore2 = insereABB(arvore2, 15);
+    arvore2 = insereABB(arvore2, 25);
+
+    printf("%d\n", verif_se_ABB(arvore1));
+    
+    imprimeIn(arvore1);
+    printf("\n");
+    
+    uniao = une_ABB(arvore1, arvore2);
+
+    imprimeIn(arvore2);
+    printf("\n");
+    imprimeIn(uniao);
+
+    libera(arvore1);
+    libera(arvore2);
+    libera(uniao);
+}
